@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%; /* White */
+    --foreground: 0 0% 20%; /* Dark gray text */
+    --card: 0 0% 96%; /* Light gray */
+    --card-foreground: 0 0% 20%; /* Dark gray text */
+    --popover: 0 0% 96%; /* Light gray */
+    --popover-foreground: 0 0% 20%; /* Dark gray text */
+    --primary: 141 73% 42%; /* Zoom Blue */
+    --primary-foreground: 0 0% 100%; /* White text */
+    --secondary: 0 0% 88%; /* Lighter gray */
+    --secondary-foreground: 0 0% 20%; /* Dark gray text */
+    --muted: 0 0% 94%; /* Very light gray */
+    --muted-foreground: 0 0% 60%; /* Medium gray text */
+    --accent: 141 73% 42%; /* Zoom Blue */
+    --accent-foreground: 0 0% 100%; /* White text */
+    --destructive: 3 100% 59%; /* Red for destructive actions */
+    --destructive-foreground: 0 0% 100%; /* White text */
+    --border: 0 0% 82%; /* Light gray borders */
+    --input: 0 0% 94%; /* Input backgrounds */
+    --ring: 141 73% 42%; /* Focus rings in Zoom Blue */
+    --chart-1: 141 73% 42%; /* Zoom Blue */
+    --chart-2: 38 100% 50%; /* Orange */
+    --chart-3: 133 61% 41%; /* Green */
+    --chart-4: 280 65% 60%; /* Purple */
+    --chart-5: 340 75% 55%; /* Pink */
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 0 0% 10%; /* Very dark gray */
+    --foreground: 0 0% 100%; /* White text */
+    --card: 0 0% 15%; /* Slightly lighter dark gray */
+    --card-foreground: 0 0% 100%; /* White text */
+    --popover: 0 0% 15%; /* Slightly lighter dark gray */
+    --popover-foreground: 0 0% 100%; /* White text */
+    --primary: 141 73% 42%; /* Spotify Green */
+    --primary-foreground: 0 0% 100%; /* White text */
+    --secondary: 0 0% 20%; /* Dark gray */
+    --secondary-foreground: 0 0% 100%; /* White text */
+    --muted: 0 0% 20%; /* Dark gray */
+    --muted-foreground: 0 0% 70%; /* Light gray text */
+    --accent: 141 73% 42%; /* Spotify Green */
+    --accent-foreground: 0 0% 100%; /* White text */
+    --destructive: 3 100% 59%; /* Red for destructive actions */
+    --destructive-foreground: 0 0% 100%; /* White text */
+    --border: 0 0% 20%; /* Dark gray borders */
+    --input: 0 0% 20%; /* Input backgrounds */
+    --ring: 141 73% 42%; /* Focus rings in Spotify Green */
+    --chart-1: 141 73% 42%; /* Spotify Green */
+    --chart-2: 48 100% 50%; /* Amber */
+    --chart-3: 0 100% 50%; /* Red */
+    --chart-4: 280 65% 60%; /* Purple */
+    --chart-5: 340 75% 55%; /* Pink */
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
