@@ -21,7 +21,7 @@ const CommentList = ({ templateId }) => {
     });
     // Setup Socket for real-time updates
     const socket = io(
-      import.meta.env.VITE_REACT_APP_SOCKET_URL || "http://localhost:5000"
+      import.meta.env.VITE_SOCKET_URL || "http://localhost:5000"
     );
 
     socket.emit("joinTemplate", templateId);

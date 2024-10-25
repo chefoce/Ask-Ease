@@ -581,7 +581,6 @@ const TemplateForm = () => {
                                 e.target.value
                               )
                             }
-                            required
                           />
                           <Select
                             value={question.type}
