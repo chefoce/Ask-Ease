@@ -261,6 +261,9 @@ const resources = {
       confirmDeleteForm: "Are you sure you want to delete this form?",
       updateForm: "Update Form",
       viewForm: "View Form",
+      mostCommonAnswers: "Most Common Answers",
+      percentageTrue: "Percentage True",
+      template: "Template",
     },
   },
   es: {
@@ -532,6 +535,9 @@ const resources = {
         "¿Estás seguro de que deseas eliminar este formulario?",
       updateForm: "Actualizar Formulario",
       viewForm: "Ver Formulario",
+      mostCommonAnswers: "Respuestas Más Comunes",
+      percentageTrue: "Porcentaje Verdadero",
+      template: "Plantilla",
     },
   },
 };

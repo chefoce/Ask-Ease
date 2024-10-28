@@ -52,9 +52,9 @@ const CommentList = ({ templateId }) => {
 
   return (
     <div className="mt-8">
-      <h3 className="text-xl font-bold mb-4">{t("comments")}</h3>
       {user && (
         <form onSubmit={handleSubmit} className="mb-4">
+          <h3 className="text-xl font-bold mb-4">{t("comments")}</h3>
           <Textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}

@@ -15,6 +15,9 @@ const UserProfilePage = () => {
   const [forms, setForms] = useState([]);
   const [activeTab, setActiveTab] = useState("templates");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null); // Manejo de errores
+  const [page, setPage] = useState(1);
+  const limit = 10; // Número de formularios por página
 
   useEffect(() => {
     const fetchUserTemplates = async () => {
@@ -28,18 +31,22 @@ const UserProfilePage = () => {
 
     const fetchUserForms = async () => {
       try {
-        const res = await api.get("/forms/my-templates");
-        setForms(res.data);
+        const res = await api.get("/forms/my", {
+          params: { page, limit }, // Paginación
+        });
+        console.log("Respuesta del servidor:", res.data); // Verificar estructura
+        setForms(res.data.forms); // Establecer solo el arreglo de formularios
         setLoading(false);
       } catch (err) {
         console.error(err);
+        setError(err.response?.data?.message || "An error occurred.");
         setLoading(false);
       }
     };
 
     fetchUserTemplates();
     fetchUserForms();
-  }, []);
+  }, [page]);
 
   const handleCreateTemplate = () => {
     navigate("/templates/create");
@@ -47,6 +54,9 @@ const UserProfilePage = () => {
 
   if (loading) {
     return <div>Loading...</div>;
+  }
+  if (error) {
+    return <div>Error: {error}</div>;
   }
   return (
     <div className="container mx-auto p-4">
@@ -82,6 +92,27 @@ const UserProfilePage = () => {
         </div>
       )}
       {activeTab === "forms" && <FormsTable forms={forms} />}
+
+      {/* Controles de Paginación */}
+      {activeTab === "forms" && (
+        <div className="flex justify-center mt-4 space-x-2">
+          <Button
+            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+            disabled={page === 1}
+          >
+            {t("previousPage") || "Página Anterior"}
+          </Button>
+          <span>
+            {t("page")} {page}
+          </span>
+          <Button
+            onClick={() => setPage((prev) => prev + 1)}
+            disabled={forms.length < limit}
+          >
+            {t("nextPage") || "Página Siguiente"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

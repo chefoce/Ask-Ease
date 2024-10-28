@@ -164,32 +164,83 @@ router.post(
 // Get forms filled out by the authenticated user
 router.get("/my", authenticate, async (req, res, next) => {
   const userId = req.user.id;
-  const { templateId } = req.query;
+  const { templateId, page = 1, limit = 10 } = req.query;
+
+  // Validar el userId
+  if (!isValidObjectId(userId)) {
+    logger.warn(`Invalid userId: ${userId}`);
+    return res.status(400).json({ message: "Invalid userId" });
+  }
 
   try {
     const whereClause = { userId };
 
     if (templateId) {
-      // Validate templateId as ObjectId
       if (!isValidObjectId(templateId)) {
+        logger.warn(`Invalid templateId: ${templateId}`);
         return res.status(400).json({ message: "Invalid templateId" });
       }
       whereClause.templateId = templateId;
     }
 
+    // Calcular el número de registros a omitir para la paginación
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const take = parseInt(limit);
+
+    // Obtener el total de formularios para la paginación
+    const totalForms = await prisma.form.count({
+      where: whereClause,
+    });
+
+    // Obtener los formularios con paginación y datos relacionados
     const forms = await prisma.form.findMany({
       where: whereClause,
+      skip: skip,
+      take: take,
+      orderBy: {
+        createdAt: "desc",
+      },
       include: {
-        template: true,
+        template: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            questions: {
+              select: {
+                id: true,
+                title: true,
+                showInTable: true,
+              },
+            },
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
 
-    res.json(forms);
+    console.log("Forms with relations:", forms); // Log para depuración
+
+    res.json({
+      total: totalForms,
+      page: parseInt(page),
+      limit: parseInt(limit),
+      forms,
+    });
   } catch (error) {
     logger.error(`Error fetching user forms: ${error.message}`);
     next(error);
   }
 });
+module.exports = router;
 
 // Get all forms of a template (accessible to the author and admin)
 router.get("/template/:templateId", authenticate, async (req, res, next) => {
@@ -260,11 +311,10 @@ router.get("/:id", authenticate, validateObjectId, async (req, res, next) => {
     next(error);
   }
 });
-
 // Endpoint to get forms of all templates created by the logged-in user
 router.get("/my-templates", authenticate, async (req, res, next) => {
   const userId = req.user.id;
-
+  logger.info("User ID: " + userId);
   try {
     // Get all templates created by the user
     const templates = await prisma.template.findMany({

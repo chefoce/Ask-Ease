@@ -260,10 +260,10 @@ const TemplatePage = () => {
                   <p>
                     <strong>{t("type")}:</strong> {t(question.type)}
                   </p>
-                  <p>
+                  {/* <p>
                     <strong>{t("showInTable")}:</strong>{" "}
                     {question.showInTable ? t("yes") : t("no")}
-                  </p>
+                  </p> */}
                 </div>
               ))}
               {isAuthor && (
@@ -299,7 +299,6 @@ const TemplatePage = () => {
       </Tabs>
       {/* Comments Section */}
       <div className="mt-8">
-        <h2 className="text-2xl font-semibold mb-4">{t("comments")}</h2>
         <CommentList comments={comments} templateId={id} />
       </div>
       {/* AlertDialog */}

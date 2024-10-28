@@ -46,9 +46,6 @@ const FormsTable = ({ forms = [] }) => {
               #
             </TableCell>
             <TableCell className="py-2 px-5 border-b border-gray-300 dark:border-white">
-              {t("user")}
-            </TableCell>
-            <TableCell className="py-2 px-5 border-b border-gray-300 dark:border-white">
               {t("template")}
             </TableCell>
             <TableCell className="py-2 px-5 border-b border-gray-300 dark:border-white">
@@ -68,10 +65,11 @@ const FormsTable = ({ forms = [] }) => {
               const isFormCreator = user && user.id === form.userId;
               const canEdit = isFormCreator || (user && user.isAdmin);
 
-              // Get the questions to display in the table for this form
-              const questionsToShow = form.template.questions.filter(
-                (q) => q.showInTable
-              );
+              // Verificar si template y questions están definidos
+              const questionsToShow =
+                form.template && form.template.questions
+                  ? form.template.questions.filter((q) => q.showInTable)
+                  : [];
 
               return (
                 <TableRow
@@ -86,10 +84,7 @@ const FormsTable = ({ forms = [] }) => {
                     {index + 1}
                   </TableCell>
                   <TableCell className="py-2 px-6 border-b border-gray-300 dark:border-white">
-                    {form.user.name}
-                  </TableCell>
-                  <TableCell className="py-2 px-6 border-b border-gray-300 dark:border-white">
-                    {form.template.title}
+                    {form.template ? form.template.title : "No Template"}
                   </TableCell>
                   <TableCell className="py-2 px-6 border-b border-gray-300 dark:border-white">
                     {new Date(form.createdAt).toLocaleDateString()}
@@ -133,7 +128,7 @@ const FormsTable = ({ forms = [] }) => {
             })
           ) : (
             <TableRow>
-              <TableCell colSpan="6" className="py-2 px-4 border-b text-center">
+              <TableCell colSpan="5" className="py-2 px-4 border-b text-center">
                 {t("noFormsAvailable") || "No forms available."}
               </TableCell>
             </TableRow>
@@ -152,7 +147,7 @@ FormsTable.propTypes = {
       user: PropTypes.shape({
         id: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
-      }).isRequired,
+      }), // Hacer opcional
       template: PropTypes.shape({
         id: PropTypes.string.isRequired,
         title: PropTypes.string.isRequired,
