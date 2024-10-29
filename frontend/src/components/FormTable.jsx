@@ -84,7 +84,7 @@ const FormTable = ({ forms = [], template }) => {
                     {index + 1}
                   </TableCell>
                   <TableCell className="py-2 px-6 border-b border-gray-300 dark:border-white">
-                    {user.name}
+                    {form.user.name}
                   </TableCell>
                   <TableCell className="py-2 px-6 border-b border-gray-300 dark:border-white">
                     {new Date(form.createdAt).toLocaleDateString()}

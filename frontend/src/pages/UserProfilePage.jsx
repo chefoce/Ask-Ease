@@ -6,6 +6,7 @@ import TemplateTable from "../components/TemplateTable";
 import FormsTable from "../components/FormsTable";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const UserProfilePage = () => {
   const { t } = useTranslation();
@@ -16,25 +17,31 @@ const UserProfilePage = () => {
   const [activeTab, setActiveTab] = useState("templates");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null); // Manejo de errores
-  const [page, setPage] = useState(1);
+  const [pageTemplates, setPageTemplates] = useState(1);
+  const [pageForms, setPageForms] = useState(1);
+
   const limit = 10; // Número de formularios por página
 
   useEffect(() => {
     const fetchUserTemplates = async () => {
       try {
-        const res = await api.get("/templates/my");
-        setTemplates(res.data);
+        const res = await api.get("/templates/my", {
+          params: { pageTemplates, limit },
+        });
+        setTemplates(res.data.templates);
+        setLoading(false);
       } catch (err) {
         console.error(err);
+        setError(err.response?.data?.message || "An error occurred.");
+        setLoading(false);
       }
     };
 
     const fetchUserForms = async () => {
       try {
         const res = await api.get("/forms/my", {
-          params: { page, limit }, // Paginación
+          params: { pageForms, limit }, // Paginación
         });
-        console.log("Respuesta del servidor:", res.data); // Verificar estructura
         setForms(res.data.forms); // Establecer solo el arreglo de formularios
         setLoading(false);
       } catch (err) {
@@ -46,17 +53,17 @@ const UserProfilePage = () => {
 
     fetchUserTemplates();
     fetchUserForms();
-  }, [page]);
+  }, [pageTemplates, pageForms]);
 
   const handleCreateTemplate = () => {
     navigate("/templates/create");
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="mt-10 ml-10">Loading...</div>;
   }
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="mt-10 ml-10">Error: {error}</div>;
   }
   return (
     <div className="container mx-auto p-4">
@@ -94,22 +101,41 @@ const UserProfilePage = () => {
       {activeTab === "forms" && <FormsTable forms={forms} />}
 
       {/* Controles de Paginación */}
+      {activeTab === "templates" && (
+        <div className="flex justify-center mt-4 space-x-2">
+          <Button
+            onClick={() => setPageTemplates((prev) => Math.max(prev - 1, 1))}
+            disabled={pageTemplates === 1}
+          >
+            <ChevronLeft />
+          </Button>
+          <span>
+            {t("page")} {pageTemplates}
+          </span>
+          <Button
+            onClick={() => setPageTemplates((prev) => prev + 1)}
+            disabled={forms.length < limit}
+          >
+            <ChevronRight />
+          </Button>
+        </div>
+      )}
       {activeTab === "forms" && (
         <div className="flex justify-center mt-4 space-x-2">
           <Button
-            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-            disabled={page === 1}
+            onClick={() => setPageForms((prev) => Math.max(prev - 1, 1))}
+            disabled={pageForms === 1}
           >
-            {t("previousPage") || "Página Anterior"}
+            <ChevronLeft />
           </Button>
           <span>
-            {t("page")} {page}
+            {t("page")} {pageForms}
           </span>
           <Button
-            onClick={() => setPage((prev) => prev + 1)}
+            onClick={() => setPageForms((prev) => prev + 1)}
             disabled={forms.length < limit}
           >
-            {t("nextPage") || "Página Siguiente"}
+            <ChevronRight />
           </Button>
         </div>
       )}

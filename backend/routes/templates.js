@@ -46,6 +46,11 @@ const templateSchema = Joi.object({
   questions: Joi.array().items(questionSchema).required(),
 });
 
+// Function to validate if a string is a valid ObjectId
+const isValidObjectId = (id) => {
+  return /^[a-fA-F0-9]{24}$/.test(id);
+};
+
 // Create a new template
 router.post(
   "/",
@@ -181,10 +186,31 @@ router.get("/search", authenticate, async (req, res, next) => {
 // Get templates created by the authenticated user
 router.get("/my", authenticate, checkBlocked, async (req, res, next) => {
   const userId = req.user.id;
+  const { templateId, page = 1, limit = 10 } = req.query;
+
+  // Validar el userId
+  if (!isValidObjectId(userId)) {
+    logger.warn(`Invalid userId: ${userId}`);
+    return res.status(400).json({ message: "Invalid userId" });
+  }
 
   try {
+    // Calcular el número de registros a omitir para la paginación
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const take = parseInt(limit);
+
+    // Obtener el total de formularios para la paginación
+    const totalTemplates = await prisma.template.count({
+      where: { authorId: userId },
+    });
+
     const templates = await prisma.template.findMany({
       where: { authorId: userId },
+      skip: skip,
+      take: take,
+      orderBy: {
+        createdAt: "desc",
+      },
       include: {
         questions: true,
         likes: {
@@ -207,14 +233,16 @@ router.get("/my", authenticate, checkBlocked, async (req, res, next) => {
           },
         },
       },
-      orderBy: {
-        createdAt: "desc",
-      },
     });
 
-    res.json(templates);
+    res.json({
+      total: totalTemplates,
+      pageTemplates: parseInt(page),
+      limit: parseInt(limit),
+      templates,
+    });
   } catch (error) {
-    logger.error(error.message);
+    logger.error(`Error fetching user templates: ${error.message}`);
     next(error);
   }
 });

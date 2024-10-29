@@ -38,7 +38,8 @@ const FormFill = () => {
   useEffect(() => {
     const fetchTemplate = async () => {
       try {
-        const res = await api.get(`/templates/${id}`);
+        // Obtén la última versión de la plantilla
+        const res = await api.get(`/templates/${id}/latest`);
         setTemplate(res.data);
         setLoading(false);
       } catch (err) {
@@ -53,7 +54,6 @@ const FormFill = () => {
 
   const handleChange = (questionId, value) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
-    // Limpiar el error al cambiar el valor
     setErrors((prev) => ({ ...prev, [questionId]: undefined }));
   };
 
@@ -61,7 +61,6 @@ const FormFill = () => {
     const newErrors = {};
     template.questions.forEach((question) => {
       const value = answers[question.id];
-      // Asumiendo que todas las preguntas son obligatorias
       if (value === undefined || value === null || value === "") {
         newErrors[question.id] =
           t("fieldIsRequired") || "This field is required.";
@@ -84,7 +83,8 @@ const FormFill = () => {
     }
     try {
       await api.post(`/forms`, {
-        templateId: id,
+        templateId: template.id,
+        version: template.version, // Añadir la versión de la plantilla al enviar el formulario
         answers,
       });
       navigate(`/templates/${id}`);

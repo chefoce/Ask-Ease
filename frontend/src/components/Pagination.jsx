@@ -1,35 +1,41 @@
-import PropTypes from 'prop-types';
+// Pagination.jsx
 
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
-  const pages = [];
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
-  for (let i = 1; i <= totalPages; i++) {
-    pages.push(i);
-  }
+const Pagination = ({ meta }) => {
+  const { t } = useTranslation();
+  const { page, totalPages } = meta;
+
+  const createPageLink = (pageNumber) => {
+    const params = new URLSearchParams(window.location.search);
+    params.set("page", pageNumber);
+    return `${window.location.pathname}?${params.toString()}`;
+  };
 
   return (
-    <div className="flex space-x-2 mt-4">
-      {pages.map((page) => (
-        <button
-          key={page}
-          onClick={() => onPageChange(page)}
-          className={`p-2 rounded ${
-            page === currentPage
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-200 dark:bg-gray-700'
-          }`}
+    <div className="flex space-x-2">
+      {page > 1 && (
+        <Link
+          to={createPageLink(page - 1)}
+          className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
         >
-          {page}
-        </button>
-      ))}
+          {t("previous")}
+        </Link>
+      )}
+      <span className="px-4 py-2">
+        {t("page")} {page} {t("of")} {totalPages}
+      </span>
+      {page < totalPages && (
+        <Link
+          to={createPageLink(page + 1)}
+          className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          {t("next")}
+        </Link>
+      )}
     </div>
   );
-};
-
-Pagination.propTypes = {
-  currentPage: PropTypes.number.isRequired,
-  totalPages: PropTypes.number.isRequired,
-  onPageChange: PropTypes.func.isRequired,
 };
 
 export default Pagination;

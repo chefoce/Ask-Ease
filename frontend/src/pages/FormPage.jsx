@@ -103,7 +103,7 @@ const FormPage = () => {
     }
   };
 
-  const handleDelete = async () => {
+  /*   const handleDelete = async () => {
     try {
       await api.delete(`/forms/${id}`);
       toast({
@@ -123,14 +123,14 @@ const FormPage = () => {
         variant: "destructive",
       });
     }
-  };
+  }; */
 
   if (loading) {
-    return <div>{t("loading")}</div>;
+    return <div className="mt-10 ml-10">{t("loading")}</div>;
   }
 
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return <div className="text-red-500 mt-10 ml-10">{error}</div>;
   }
 
   return (
@@ -257,7 +257,7 @@ const FormPage = () => {
         )}
       </form>
       {/* Button delete */}
-      {!isReadOnly && (
+      {/*    {!isReadOnly && (
         <Button
           variant="destructive"
           className="mt-4 w-full p-6 text-lg"
@@ -265,9 +265,9 @@ const FormPage = () => {
         >
           {t("deleteForm")}
         </Button>
-      )}
+      )} */}
       {/* Delete Dialog */}
-      <AlertDialog
+      {/*       <AlertDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
       >
@@ -287,7 +287,7 @@ const FormPage = () => {
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
+      </AlertDialog> */}
     </div>
   );
 };

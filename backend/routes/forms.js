@@ -162,7 +162,7 @@ router.post(
 );
 
 // Get forms filled out by the authenticated user
-router.get("/my", authenticate, async (req, res, next) => {
+router.get("/my", authenticate, checkBlocked, async (req, res, next) => {
   const userId = req.user.id;
   const { templateId, page = 1, limit = 10 } = req.query;
 
@@ -227,11 +227,9 @@ router.get("/my", authenticate, async (req, res, next) => {
       },
     });
 
-    console.log("Forms with relations:", forms); // Log para depuración
-
     res.json({
       total: totalForms,
-      page: parseInt(page),
+      pageForms: parseInt(page),
       limit: parseInt(limit),
       forms,
     });

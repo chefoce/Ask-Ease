@@ -100,7 +100,7 @@ const FormsTable = ({ forms = [] }) => {
                   <TableCell className="py-2 px-6 border-b border-gray-300 dark:border-white">
                     <div className="flex space-x-2">
                       <Link
-                        to={`/forms/${form.id}`}
+                        to={`/forms/view/${form.id}`}
                         className="text-accent hover:text-green-300"
                       >
                         <Eye className="h-5 w-5" />
@@ -108,7 +108,7 @@ const FormsTable = ({ forms = [] }) => {
                       {canEdit && (
                         <>
                           <Link
-                            to={`/forms/${form.id}`}
+                            to={`/forms/edit/${form.id}`}
                             className="text-accent hover:text-blue-500"
                           >
                             <Edit2 className="h-5 w-5" />
