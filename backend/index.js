@@ -7,25 +7,9 @@ const logger = require("./config/logger");
 const morgan = require("morgan");
 const http = require("http");
 const server = http.createServer(app);
-/* const socketIo = require("socket.io")(server, {
-  cors: {
-    origin: ["https://ask-ease-front.onrender.com"],
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
-});
-
-// Middleware
-app.use(
-  cors({
-    origin: ["https://ask-ease-front.onrender.com"],
-    methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
-    credentials: true,
-  })
-); */
 const socketIo = require("socket.io")(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://localhost:5173"],
+    origin: ["https://ask-ease-front.onrender.com"],
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -34,7 +18,7 @@ const socketIo = require("socket.io")(server, {
 // Middleware
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:5173"], // Frontend URL
+    origin: ["https://ask-ease-front.onrender.com"],
     methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
     credentials: true,
   })
