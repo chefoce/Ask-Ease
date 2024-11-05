@@ -23,6 +23,22 @@ app.use(
     credentials: true,
   })
 );
+/* const socketIo = require("socket.io")(server, {
+  cors: {
+    origin: ["http://localhost:3000", "http://localhost:5173"],
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
+// Middleware
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "http://localhost:5173"], // Frontend URL
+    methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
+    credentials: true,
+  })
+); */
 
 app.use(express.json());
 app.set("socketIo", socketIo);
