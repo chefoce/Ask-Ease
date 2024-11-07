@@ -4,6 +4,7 @@ import AuthContext from "../context/AuthContext";
 import api from "../utils/api";
 import TemplateTable from "../components/TemplateTable";
 import FormsTable from "../components/FormsTable";
+import TicketsTable from "../components/TicketsTable";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -14,6 +15,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
 
 const UserProfilePage = () => {
   const { t } = useTranslation();
@@ -26,6 +28,7 @@ const UserProfilePage = () => {
   const [error, setError] = useState(null);
   const [pageTemplates, setPageTemplates] = useState(1);
   const [pageForms, setPageForms] = useState(1);
+  const { toast } = useToast();
 
   const limit = 10;
 
@@ -43,6 +46,29 @@ const UserProfilePage = () => {
   const [successDialogMessage, setSuccessDialogMessage] = useState("");
 
   const isConnectedToSalesforce = !!user.salesforceAccountId;
+
+  const [tickets, setTickets] = useState([]);
+  const [pageTickets, setPageTickets] = useState(1);
+
+  const [apiToken, setApiToken] = useState(user.apiToken || "");
+
+  const generateApiToken = async () => {
+    try {
+      const res = await api.post("/users/generate-api-token");
+      setApiToken(res.data.apiToken);
+      toast({
+        title: t("success"),
+        description: t("apiTokenGenerated"),
+      });
+    } catch (error) {
+      console.error("Error generating API token:", error);
+      toast({
+        title: t("error"),
+        description: t("apiTokenGenerationFailed"),
+        variant: "destructive",
+      });
+    }
+  };
 
   useEffect(() => {
     const fetchUserTemplates = async () => {
@@ -76,6 +102,21 @@ const UserProfilePage = () => {
     fetchUserTemplates();
     fetchUserForms();
   }, [pageTemplates, pageForms]);
+
+  useEffect(() => {
+    const fetchUserTickets = async () => {
+      try {
+        const res = await api.get("/jira/tickets", {
+          params: { page: pageTickets, limit: 10 },
+        });
+        setTickets(res.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchUserTickets();
+  }, [pageTickets]);
 
   const handleCreateTemplate = () => {
     navigate("/templates/create");
@@ -142,6 +183,15 @@ const UserProfilePage = () => {
           </Button>
         )}
       </div>
+      <div className="mt-4">
+        {apiToken ? (
+          <div className="bg-gray-100 p-4 rounded">
+            <p className="font-mono">{apiToken}</p>
+          </div>
+        ) : (
+          <Button onClick={generateApiToken}>{t("generateApiToken")}</Button>
+        )}
+      </div>
 
       <div className="mb-4">
         <nav className="flex space-x-4 justify-center">
@@ -163,6 +213,15 @@ const UserProfilePage = () => {
           >
             {t("myForms")}
           </Button>
+          <Button
+            type="button"
+            onClick={() => setActiveTab("tickets")}
+            className={`p-2 ${
+              activeTab === "tickets" ? "font-bold" : "bg-secondary"
+            }`}
+          >
+            {t("myTickets")}
+          </Button>
         </nav>
       </div>
       {activeTab === "templates" && (
@@ -176,7 +235,7 @@ const UserProfilePage = () => {
         </div>
       )}
       {activeTab === "forms" && <FormsTable forms={forms} />}
-
+      {activeTab === "tickets" && <TicketsTable tickets={tickets} />}
       {/* Controles de Paginación */}
       {activeTab === "templates" && (
         <div className="flex justify-center mt-4 space-x-2">
@@ -211,6 +270,25 @@ const UserProfilePage = () => {
           <Button
             onClick={() => setPageForms((prev) => prev + 1)}
             disabled={forms.length < limit}
+          >
+            <ChevronRight />
+          </Button>
+        </div>
+      )}
+      {activeTab === "tickets" && (
+        <div className="flex justify-center mt-4 space-x-2">
+          <Button
+            onClick={() => setPageTickets((prev) => Math.max(prev - 1, 1))}
+            disabled={pageTickets === 1}
+          >
+            <ChevronLeft />
+          </Button>
+          <span>
+            {t("page")} {pageTickets}
+          </span>
+          <Button
+            onClick={() => setPageTickets((prev) => prev + 1)}
+            disabled={tickets.length < limit}
           >
             <ChevronRight />
           </Button>

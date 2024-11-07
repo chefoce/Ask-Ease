@@ -67,6 +67,7 @@ const searchRoutes = require("./routes/search");
 const tagRoutes = require("./routes/tags");
 const userRoutes = require("./routes/users");
 const aggregationRoutes = require("./routes/aggregation");
+const jiraRoutes = require("./routes/jira");
 
 // Use routes
 app.use("/api/auth", authRoutes);
@@ -81,6 +82,7 @@ app.use("/api/search", searchRoutes);
 app.use("/api/tags", tagRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/aggregation", aggregationRoutes);
+app.use("/api/jira", jiraRoutes);
 
 const errorHandler = require("./middleware/errorHandler");
 app.use(errorHandler);

@@ -4,6 +4,7 @@ const authenticate = require("../middleware/authenticate");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const logger = require("../config/logger");
+const crypto = require("crypto");
 
 const Joi = require("joi");
 const validate = require("../middleware/validationMiddleware");
@@ -109,5 +110,19 @@ router.patch(
     }
   }
 );
+
+router.post("/generate-api-token", authenticate, async (req, res, next) => {
+  try {
+    const token = crypto.randomBytes(32).toString("hex");
+    await prisma.user.update({
+      where: { id: req.user.id },
+      data: { apiToken: token },
+    });
+    res.json({ apiToken: token });
+  } catch (error) {
+    logger.error("Error generating API token:", error);
+    next(error);
+  }
+});
 
 module.exports = router;
